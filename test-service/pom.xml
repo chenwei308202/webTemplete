@@ -23,6 +23,11 @@
       <groupId>com.chen</groupId>
       <artifactId>test-api</artifactId>
     </dependency>
+    
+    <dependency>
+	    <groupId>redis.clients</groupId>
+	    <artifactId>jedis</artifactId>
+	</dependency>
   </dependencies>
   
 </project>
