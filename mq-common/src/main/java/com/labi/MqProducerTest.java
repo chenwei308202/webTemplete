@@ -1,7 +1,9 @@
 package com.labi;
 
-import com.labi.common.LabiTopic;
-import com.labi.provider.MsgProducer;
+import java.util.Random;
+
+import com.labi.common.MsgType;
+import com.labi.provider.ProviderFactory;
 
 public class MqProducerTest {
 
@@ -11,9 +13,9 @@ public class MqProducerTest {
 	public static void main(String[] args) {
 		for (int i = 0; i < 1000; i++) {
 			
-			MsgProducer.getInstance(LabiTopic.RONG_BASEINFO).SendMessage("我说yes你说no");
+			ProviderFactory.getProvider(MsgType.quene,"testMM").SendTextMessage("哈利路亚");
 			try {
-				Thread.sleep(2000);
+				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

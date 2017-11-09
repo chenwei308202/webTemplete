@@ -2,10 +2,17 @@ package com.labi.common;
 
 import javax.jms.Connection;
 import javax.jms.JMSException;
+import javax.jms.Queue;
 import javax.jms.Session;
 import javax.jms.Topic;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
+
+import com.labi.consumer.AbstractMsgConsumer;
+import com.labi.consumer.Consumer;
+import com.labi.consumer.QueneConsumer;
+import com.labi.consumer.TopicConsumer;
+import com.labi.provider.AbstractMsgProducer;
 
 public  class ConnectFactory {
 	
@@ -18,72 +25,63 @@ public  class ConnectFactory {
 	//服务器链接地址
 	private static final String BROKEURL=ConnectCfg.DEFAULT_BROKEURL;
 	
-	//连接对象
-	private Connection connection;
+	private static boolean isRun;
+	private static  Connection connection;
 	
-	private Session session;
+	private static Session session;
 	
-	private Topic topic;
-	
-	private boolean isRun;
-	
-	private String topicName;
-	
-	
-	public ConnectFactory(String  topicName){
-		this.topicName=topicName;
-		init();
+	public static Connection getConnection() {
+		return connection;
 	}
-	
-	
-	
-	public void init(){
-		
+
+	public static void setConnection(Connection connection) {
+		ConnectFactory.connection = connection;
+	}
+
+	public static Session getSession() {
+		return session;
+	}
+
+	public static void setSession(Session session) {
+		ConnectFactory.session = session;
+	}
+
+	static{
+		if (isRun) {
+			throw new RuntimeException("mq服务连接已经启动");
+		}
 		ActiveMQConnectionFactory connectionFactory=new ActiveMQConnectionFactory(USER_NAME, PASSWORD, BROKEURL);
 		try {
-			connection=connectionFactory.createTopicConnection();
+			connectionFactory.setUseAsyncSend(true);//异步发送，不等待服务器回执
+			connectionFactory.setProducerWindowSize(10240000);//发送端在累积发送了10m左右的数据时，等待服务器进行回执
+			connection=connectionFactory.createConnection();
+			session= ConnectFactory.getConnection().createSession(false, Session.AUTO_ACKNOWLEDGE);
+//			if (consumer!=null) {
+//				
+//				if (consumer instanceof TopicConsumer) {
+//					if (((TopicConsumer)consumer).getClientId()==null) {
+//						throw new RuntimeException("clientID不能为空");
+//					}else {
+//						connection.setClientID(((TopicConsumer)consumer).getClientId());
+//					}
+//				}else {
+//				}
+//				consumer.setConnection(connection);
+//			}
+//			if (provider!=null) {
+//				
+//			}
+//			Session session=connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 			connection.start();
-			//事务关闭 如果开始事务会导致消息无法发出和消费(跟提交有关，未验证) 这是个坑
-			session=connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-			topic=session.createTopic(topicName);
 			isRun=true;
 			
 		} catch (JMSException e) {
-			e.printStackTrace();
+			throw new RuntimeException("mq服务初始化异常", e);
 		}
 	}
 
 
-	public Session getSession() {
-		return session;
-	}
 
-	public void setSession(Session session) {
-		this.session = session;
-	}
-
-	public Topic getTopic() {
-		return topic;
-	}
-
-	public void setTopic(Topic topic) {
-		this.topic = topic;
-	}
-
-	public boolean isRun() {
-		return isRun;
-	}
-
-	public void setRun(boolean isRun) {
-		this.isRun = isRun;
-	}
-
-	public String getTopicName() {
-		return topicName;
-	}
-
-	public void setTopicName(String topicName) {
-		this.topicName = topicName;
-	};
 	
+
 }
