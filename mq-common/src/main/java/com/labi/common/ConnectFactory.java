@@ -1,36 +1,27 @@
 package com.labi.common;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.jms.Connection;
 import javax.jms.JMSException;
-import javax.jms.Queue;
 import javax.jms.Session;
-import javax.jms.Topic;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 
-import com.labi.consumer.AbstractMsgConsumer;
-import com.labi.consumer.Consumer;
-import com.labi.consumer.QueneConsumer;
-import com.labi.consumer.TopicConsumer;
-import com.labi.provider.AbstractMsgProducer;
-
 public  class ConnectFactory {
-	
-	//用户名
-	private static final String USER_NAME=ConnectCfg.DEFAULT_USER_NAME;
-	
-	//密码
-	private static final String PASSWORD=ConnectCfg.DEFAULT_PASSWORD;
-	
-	//服务器链接地址
-	private static final String BROKEURL=ConnectCfg.DEFAULT_BROKEURL;
-	
 	private static boolean isRun;
 	private static  Connection connection;
 	
 	private static Session session;
 	
+	private static Integer reTryTimes=3;
+	
 	public static Connection getConnection() {
+		checkConnect();
 		return connection;
 	}
 
@@ -39,6 +30,7 @@ public  class ConnectFactory {
 	}
 
 	public static Session getSession() {
+		checkConnect();
 		return session;
 	}
 
@@ -47,31 +39,29 @@ public  class ConnectFactory {
 	}
 
 	static{
+		
+		init();
+	}
+
+	public static  void init(){
 		if (isRun) {
 			throw new RuntimeException("mq服务连接已经启动");
 		}
-		ActiveMQConnectionFactory connectionFactory=new ActiveMQConnectionFactory(USER_NAME, PASSWORD, BROKEURL);
+		
+		Properties serverProp=new Properties();
+		try {
+			InputStream propertiesInput = ConnectFactory.class.getResourceAsStream("mq_cfg.properties");
+			serverProp.load(propertiesInput);
+		} catch (IOException e1) {
+			throw new RuntimeException("加载mq配置文件异常", e1);
+		}
+		
+		ActiveMQConnectionFactory connectionFactory=new ActiveMQConnectionFactory(serverProp.getProperty("user_name"), serverProp.getProperty("password"), serverProp.getProperty("broke_url"));
 		try {
 			connectionFactory.setUseAsyncSend(true);//异步发送，不等待服务器回执
 			connectionFactory.setProducerWindowSize(10240000);//发送端在累积发送了10m左右的数据时，等待服务器进行回执
 			connection=connectionFactory.createConnection();
 			session= ConnectFactory.getConnection().createSession(false, Session.AUTO_ACKNOWLEDGE);
-//			if (consumer!=null) {
-//				
-//				if (consumer instanceof TopicConsumer) {
-//					if (((TopicConsumer)consumer).getClientId()==null) {
-//						throw new RuntimeException("clientID不能为空");
-//					}else {
-//						connection.setClientID(((TopicConsumer)consumer).getClientId());
-//					}
-//				}else {
-//				}
-//				consumer.setConnection(connection);
-//			}
-//			if (provider!=null) {
-//				
-//			}
-//			Session session=connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 			connection.start();
 			isRun=true;
 			
@@ -79,8 +69,19 @@ public  class ConnectFactory {
 			throw new RuntimeException("mq服务初始化异常", e);
 		}
 	}
-
-
+	
+	/**
+	 * 
+	 * @Title: checkConnect
+	 * @Description: 检测链接是否已经断开
+	 * @throws
+	 */
+	public static void checkConnect() {
+		if (connection==null || session==null) {
+			isRun=false;
+			init();
+		}
+	}
 
 	
 

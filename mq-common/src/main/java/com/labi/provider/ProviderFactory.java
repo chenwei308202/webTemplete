@@ -13,13 +13,14 @@ import com.labi.common.MsgType;
 
 public abstract class ProviderFactory {
 
-	protected static ConcurrentHashMap<Destination, Provider> providerMaps=new ConcurrentHashMap<Destination, Provider>();
+	private static ConcurrentHashMap<Destination, Provider> providerMaps=new ConcurrentHashMap<Destination, Provider>();
 	
 	/**
 	 * 
-	 * @Title: getconsumer
+	 * @Title: getProvider
 	 * @Description: 得到一个点对点模式的生产者
-	 * @param queneName
+	 * @param msgType 
+	 * @param name
 	 * @return 
 	 * @throws
 	 */

@@ -13,7 +13,7 @@ import com.labi.common.MsgType;
 
 public abstract class ConsumerFactory {
 
-	protected static ConcurrentHashMap<Destination, Consumer> consumerMaps=new ConcurrentHashMap<Destination, Consumer>();//缓存的消费者
+	private static ConcurrentHashMap<Destination, Consumer> consumerMaps=new ConcurrentHashMap<Destination, Consumer>();//缓存的消费者
 	
 	/**
 	 * 

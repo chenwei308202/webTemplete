@@ -9,6 +9,6 @@ public class ConnectCfg {
 		static final String DEFAULT_PASSWORD="labifenqi";
 		
 		//服务器链接地址
-		static final String DEFAULT_BROKEURL="tcp://192.168.70.11:61616";
+		static final String DEFAULT_BROKEURL="tcp://123.57.22.1:61616";
 		
 }
