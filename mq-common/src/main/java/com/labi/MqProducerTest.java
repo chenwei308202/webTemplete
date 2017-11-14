@@ -12,8 +12,12 @@ public class MqProducerTest {
 	
 	public static void main(String[] args) {
 		for (int i = 0; i < 1000; i++) {
-			
-			ProviderFactory.getProvider(MsgType.quene,"testMM").SendTextMessage("哈利路亚");
+			try {
+				ProviderFactory.getProvider(MsgType.quene,"testMM").SendTextMessage("哈利路亚");
+				
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {

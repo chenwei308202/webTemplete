@@ -1,5 +1,5 @@
 package com.labi.common;
-
+@Deprecated
 public class ConnectCfg {
 
 		//用户名
