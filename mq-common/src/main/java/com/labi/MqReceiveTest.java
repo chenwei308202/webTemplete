@@ -7,7 +7,7 @@ public class MqReceiveTest {
 
 	
 	public static void main(String[] args) {
-		
+
 		new Thread(new Runnable() {
 			
 			public void run() {
@@ -15,7 +15,7 @@ public class MqReceiveTest {
 					String msgBody= ConsumerFactory.getConsumer(MsgType.quene,"LIST_BASEINFO").receiveTextMessage();
 					System.out.println(msgBody);
 					try {
-						Thread.sleep(3000);
+						Thread.sleep(500);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}

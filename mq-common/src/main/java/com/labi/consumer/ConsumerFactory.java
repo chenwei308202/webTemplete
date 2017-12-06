@@ -9,12 +9,15 @@ import javax.jms.JMSException;
 import javax.jms.Queue;
 import javax.jms.Topic;
 
+import org.apache.log4j.Logger;
+
 import com.labi.common.MsgType;
 
 public abstract class ConsumerFactory {
 
 	private static ConcurrentHashMap<Destination, Consumer> consumerMaps=new ConcurrentHashMap<Destination, Consumer>();//缓存的消费者
 	
+	private static Logger logger=Logger.getLogger(ConsumerFactory.class);
 	/**
 	 * 
 	 * @Title: getConsumer
@@ -69,5 +72,9 @@ public abstract class ConsumerFactory {
 		return null;
 	}
 	
+	public static void clearConsumerCache(){
+		consumerMaps.clear();
+		logger.info("清空了消费者缓存");
+	}
 	
 }

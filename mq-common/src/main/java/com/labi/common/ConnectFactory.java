@@ -13,6 +13,9 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.ActiveMQSession;
 import org.apache.log4j.Logger;
 
+import com.labi.consumer.ConsumerFactory;
+import com.labi.provider.ProviderFactory;
+
 public  class ConnectFactory {
 	
 	private static Logger logger=Logger.getLogger(ConnectFactory.class);
@@ -66,12 +69,14 @@ public  class ConnectFactory {
 		
 		if (reTryTimes==0 && (System.currentTimeMillis()-downTimeStamp>timePeriod)) {
 			reTryTimes=3;
+			logger.error("mq服务连接失败，重试后扔无法连接");
 		}
 		
-		while (reTryTimes!=0||(reTryTimes==0 && (System.currentTimeMillis()-downTimeStamp>timePeriod))) {
+		while (reTryTimes!=0) {
 			
 			ActiveMQConnectionFactory connectionFactory=new ActiveMQConnectionFactory(serverProp.getProperty("user_name"), serverProp.getProperty("password"), serverProp.getProperty("broke_url"));
 			try {
+				connectionFactory.setAlwaysSyncSend(false);
 				connectionFactory.setUseAsyncSend(true);//异步发送，不等待服务器回执
 				connectionFactory.setProducerWindowSize(10240000);//发送端在累积发送了10m左右的数据时，等待服务器进行回执
 				connection=connectionFactory.createConnection();
@@ -85,6 +90,8 @@ public  class ConnectFactory {
 				if (reTryTimes==0) {
 					logger.error("mq服务连接失败，重试后扔无法连接");
 					downTimeStamp=System.currentTimeMillis();
+					ProviderFactory.clearProviderCache();
+					ConsumerFactory.clearConsumerCache();
 					throw new RuntimeException("mq服务初始化异常", e);
 				}else {
 					logger.error("mq服务连接失败，正在进行重试", e);
@@ -100,7 +107,6 @@ public  class ConnectFactory {
 	 * @throws
 	 */
 	public synchronized static void checkConnect() {
-		
 		if (connection==null || session==null||((ActiveMQConnection)connection).isClosed()|| ((ActiveMQSession)session).isClosed()) {
 			isRun=false;
 			init();

@@ -9,12 +9,16 @@ import javax.jms.JMSException;
 import javax.jms.Queue;
 import javax.jms.Topic;
 
+import org.apache.log4j.Logger;
+
 import com.labi.common.MsgType;
+import com.labi.consumer.ConsumerFactory;
 
 public abstract class ProviderFactory {
 
-	private static ConcurrentHashMap<Destination, Provider> providerMaps=new ConcurrentHashMap<Destination, Provider>();
+	static ConcurrentHashMap<Destination, Provider> providerMaps=new ConcurrentHashMap<Destination, Provider>();
 	
+	private static Logger logger=Logger.getLogger(ConsumerFactory.class);
 	/**
 	 * 
 	 * @Title: getProvider
@@ -44,7 +48,8 @@ public abstract class ProviderFactory {
 						}
 						if (name.equals(destinationName)) {
 							isGet=true;
-							return providerMaps.get(destination);
+							AbstractMsgProducer provider = (AbstractMsgProducer)providerMaps.get(destination);
+							return provider;
 						}
 					} catch (JMSException e) {
 						e.printStackTrace();
@@ -67,7 +72,10 @@ public abstract class ProviderFactory {
 		return null;
 	}
 	
-	
+	public static void clearProviderCache(){
+		providerMaps.clear();
+		logger.info("清空了生产者缓存");
+	}
 	
 	
 }
