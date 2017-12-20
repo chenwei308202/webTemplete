@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >  
+<mapper namespace="com.chen.dao.MenuDao">  
+	    <resultMap id="BaseResultMap" type="com.chen.bean.Menu">  
+	        <result column="id" property="id" />  
+	        <result column="menu_name" property="menuName" />  
+	        <result column="menu_url" property="menuUrl" />  
+	        <result column="parent_id" property="parentId" />  
+	        <result column="menu_level" property="menuLevel" />  
+	        <result column="nav_status" property="navStatus" />  
+	        <result column="create_date" property="createDate" />  
+	    </resultMap>  
+	    
+	    <resultMap id="parentMenuMap" type="com.chen.bean.Menu">  
+	        <result column="id" property="id" />  
+	        <result column="menu_name" property="menuName" />  
+	        <result column="menu_url" property="menuUrl" />  
+	        <result column="parent_id" property="parentId" />  
+	        <result column="menu_level" property="menuLevel" />  
+	        <result column="nav_status" property="navStatus" />  
+	        <result column="create_date" property="createDate" />  
+	        
+	        <collection property="subMenus" ofType="com.chen.bean.Menu" column="id" select="querySubMenus"></collection>
+	    </resultMap>  
+	    
+	    
+	    
+	  <sql id="Base_Column_List" >  
+	    id, menu_name, menu_url,parent_id,menu_level,nav_status,create_date
+	  </sql>  
+	  
+	  
+	  <select id="querySubMenus" parameterType="int" resultMap="parentMenuMap">
+	  	select
+	  	<include refid="Base_Column_List" /> 
+	  	from menu m
+		  	where 1=1
+			   	and m.parent_id =#{id}
+	  </select>
+	  
+	  
+	  <select id="queryTopMenus"  resultMap="parentMenuMap">
+	  	select
+	  	<include refid="Base_Column_List" /> 
+	  	from menu m
+		  	where 1=1 
+			   	
+	    <if test="menuLevel != null">
+	   		and m.menu_level =${menuLevel}
+	   </if>
+	    <if test="navStatus != null">
+	   		and m.nav_status =${navStatus}
+	   </if>
+	  </select>
+	  
+	  
+	  
+	  
+	  
+	  <select id="queryBy" parameterType="com.chen.bean.Menu" resultMap="BaseResultMap">
+	  	select
+	  	<include refid="Base_Column_List" /> 
+	  	from menu m
+	   where 1=1
+	   <if test="menuName != null">
+	   	and m.menu_name =#{userName}
+	   </if>
+	   <if test="menuUrl != null">
+	   	and m.menu_url =#{menuUrl}
+	   </if>
+	   <if test="parentId != null">
+	   	and m.parent_id =#{parentId}
+	   </if>
+	   <if test="menuLevel != null">
+	   	and m.menu_level =#{menuLevel}
+	   </if>
+	   <if test="createDate != null">
+	   	and m.create_date =#{createDate}
+	   </if>
+	   <if test="navStatus != null">
+	   	and m.nav_status =#{navStatus}
+	   </if>
+	   <if test="id != null">
+	   	and m.id =#{id}
+	   </if>
+	  
+	  </select>
+</mapper> 

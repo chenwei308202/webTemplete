@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >  
+<mapper namespace="com.chen.dao.SchoolIntroduceDao">  
+	    <resultMap id="BaseResultMap" type="com.chen.bean.SchoolIntroduce">  
+	        <result column="id" property="id" />  
+	        <result column="head" property="headName" />  
+	        <result column="school_img" property="schoolImg" />  
+	        <result column="text_body" property="textBody" />  
+	        <result column="create_date" property="createDate" />  
+	        <result column="status" property="status" />  
+	    </resultMap>  
+	  <sql id="Base_Column_List" >  
+	    id, head, school_img,text_body,create_date,status
+	  </sql>  
+	  
+	  <select id="queryBy" parameterType="com.chen.bean.SchoolIntroduce" resultMap="BaseResultMap">
+	  	select
+	  	<include refid="Base_Column_List" /> 
+	  	from school_introduce s
+	   where 1=1
+	   and s.status=1
+	  
+	  </select>
+	  
+	  <update id="update">
+	  	update school_introduce 
+	  	  <trim prefix="set" suffixOverrides=",">
+	  	<if test="headName !=null ">
+	  		head =#{headName},
+	  	</if>
+	  
+	  	<if test="schoolImg !=null ">
+	  		school_img =#{schoolImg},
+	  	</if>
+	  
+	  	<if test="textBody !=null ">
+	  		text_body =#{textBody}
+	  	</if>
+	  	</trim>
+	  	where id=1
+	  </update>
+</mapper> 

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >  
+<mapper namespace="com.chen.dao.SchoolNoticeDao">  
+	    <resultMap id="BaseResultMap" type="com.chen.bean.Notice">  
+	        <result column="id" property="id" />  
+	        <result column="notice_head" property="noticeHead" />  
+	        <result column="notice_url" property="noticeUrl" />  
+	        <result column="notice_body" property="noticeBody" />  
+	        <result column="create_date" property="createDate" />  
+	        <result column="is_del" property="isDel" />  
+	        <result column="img_src" property="imgSrc" />  
+	    </resultMap>  
+	  <sql id="Base_Column_List" >  
+	    id, notice_head, notice_url,notice_body,create_date,is_del,img_src
+	  </sql>  
+	  
+	  
+	  
+	  <insert id="insertOne"  parameterType="com.chen.bean.Notice" >  
+	   insert into school_notice
+	    (<include refid="Base_Column_List" />  )
+	   values
+	   (null,#{noticeHead},#{noticeUrl},#{noticeBody},now(),#{isDel},#{imgSrc})
+	  </insert>  
+	  
+	  
+	  <insert id="updateOne"  parameterType="com.chen.bean.Notice" >  
+	   update school_notice
+	    <trim prefix="set" suffixOverrides=",">
+	  	<if test="noticeHead !=null ">
+	  		notice_head =#{noticeHead},
+	  	</if>
+	  
+	  	<if test="noticeUrl !=null ">
+	  		notice_url =#{noticeUrl}
+	  	</if>
+	  	<if test="noticeBody !=null ">
+	  		notice_body =#{noticeBody}
+	  	</if>
+	  	<if test="isDel !=null ">
+	  		is_del =#{isDel}
+	  	</if>
+	  	<if test="imgSrc !=null ">
+	  		img_src =#{imgSrc}
+	  	</if>
+	  	</trim>
+	  	where id=#{id}
+	  </insert>  
+	  
+	  
+	  
+	  
+	  
+	  
+	  <select id="queryCount" parameterType="com.chen.bean.Page" resultType="int">
+	  	select
+	  	count(1)
+	  	from school_notice s
+	   where 1=1
+		   <if test="id !=null ">
+		   
+		   	and s.id =#{id}
+		   </if>
+	   	
+	  
+	  </select>
+	  <select id="queryBy" parameterType="com.chen.bean.Page" resultMap="BaseResultMap">
+	  	select
+	  	<include refid="Base_Column_List" /> 
+	  	from school_notice s
+	   where 1=1
+		   <if test="id !=null ">
+		   
+		   	and s.id =#{id}
+		   </if>
+	   	
+	  
+	  </select>
+	  
+	  <update id="update">
+	  	update school_introduce 
+	  	  <trim prefix="set" suffixOverrides=",">
+	  	<if test="headName !=null ">
+	  		head =#{headName},
+	  	</if>
+	  
+	  	<if test="schoolImg !=null ">
+	  		school_img =#{schoolImg},
+	  	</if>
+	  
+	  	<if test="textBody !=null ">
+	  		text_body =#{textBody}
+	  	</if>
+	  	</trim>
+	  	where id=1
+	  </update>
+</mapper> 

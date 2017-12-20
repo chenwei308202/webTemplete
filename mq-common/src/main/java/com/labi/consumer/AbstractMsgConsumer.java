@@ -16,7 +16,9 @@ public abstract class AbstractMsgConsumer extends Consumer{
 			 Message message=this.messageConsumer.receive();
 			 if (message!=null && message instanceof TextMessage) {
 				 TextMessage textMessage=(TextMessage)message;	
-				 return textMessage.getText();
+				 String textString= textMessage.getText();
+				 messageConsumer.close();
+				 return textString;
 			 }else {
 				 throw new RuntimeException("非文本类型的消息异常");
 			}

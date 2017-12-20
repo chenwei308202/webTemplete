@@ -16,7 +16,7 @@ import com.labi.consumer.ConsumerFactory;
 
 public abstract class ProviderFactory {
 
-	static ConcurrentHashMap<Destination, Provider> providerMaps=new ConcurrentHashMap<Destination, Provider>();
+//	static ConcurrentHashMap<Destination, Provider> providerMaps=new ConcurrentHashMap<Destination, Provider>();
 	
 	private static Logger logger=Logger.getLogger(ConsumerFactory.class);
 	/**
@@ -32,9 +32,8 @@ public abstract class ProviderFactory {
 		if (msgType==null || name==null) {
 			throw new RuntimeException("参数缺失，msgtype="+msgType+"name="+name);
 		}
-		boolean isGet=false;
-		synchronized (providerMaps) {
-			if (providerMaps.size()>0) {
+//		synchronized (providerMaps) {
+			/*if (providerMaps.size()>0) {
 				Set<Destination> keySet = providerMaps.keySet();
 				Destination destination=null;
 				String destinationName="";
@@ -56,25 +55,22 @@ public abstract class ProviderFactory {
 					}
 				
 				}
-			}
+			}*/
 			
-			if (!isGet) {//这块还是有问题，后续再说
+//			if (!isGet) {//这块还是有问题，后续再说
 				Provider provider=null;
 				if (MsgType.quene.equals(msgType)) {
 					provider=new QueueProvider(name);
 				}else {
 					provider=new TopicProvider(name);
 				}
-				providerMaps.put(provider.destination, provider);
 				return provider;
-			}
-		}
-		return null;
+//			}
+//		}
 	}
 	
 	public static void clearProviderCache(){
-		providerMaps.clear();
-		logger.info("清空了生产者缓存");
+//		logger.info("清空了生产者缓存");
 	}
 	
 	

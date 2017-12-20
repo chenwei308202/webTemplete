@@ -12,7 +12,7 @@ public class MqProducerTest {
 		
 		for (int i = 0; i < 1000; i++) {
 			try {
-				ProviderFactory.getProvider(MsgType.quene,"testMM").SendTextMessage("哈利路亚");
+				ProviderFactory.getProvider(MsgType.quene,"LIST_BASEINFO").SendTextMessage("哈利路亚");
 				
 			} catch (Exception e) {
 				e.printStackTrace();

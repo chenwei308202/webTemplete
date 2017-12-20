@@ -22,6 +22,7 @@ public abstract class AbstractMsgProducer extends Provider{
 			try {
 				TextMessage textMessage =ConnectFactory.getSession().createTextMessage((String)message);
 				this.messageProducer.send(textMessage);
+				this.messageProducer.close();
 			} catch (JMSException e) {
 				e.printStackTrace();
 				throw new RuntimeException("发送消息异常");

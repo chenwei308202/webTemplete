@@ -12,8 +12,13 @@ public class MqReceiveTest {
 			
 			public void run() {
 				while (true) {
-					String msgBody= ConsumerFactory.getConsumer(MsgType.quene,"LIST_BASEINFO").receiveTextMessage();
-					System.out.println(msgBody);
+					try {
+						
+						String msgBody= ConsumerFactory.getConsumer(MsgType.quene,"LIST_BASEINFO").receiveTextMessage();
+						System.out.println(msgBody);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 					try {
 						Thread.sleep(500);
 					} catch (InterruptedException e) {
